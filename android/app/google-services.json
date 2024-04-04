@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "859967241146",
+    "firebase_url": "https://fasum-app-1d76a-default-rtdb.firebaseio.com",
     "project_id": "fasum-app-1d76a",
     "storage_bucket": "fasum-app-1d76a.appspot.com"
   },
@@ -12,7 +13,12 @@
           "package_name": "com.example.fasum_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "859967241146-1j9mncnm5hurf8blt8urslvjagnkcu7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBWfp6DXxggE_PEHd0RxpICHv50danyN-c"
@@ -20,7 +26,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859967241146-1j9mncnm5hurf8blt8urslvjagnkcu7r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "859967241146-5au4h21b0lnuta98cd40slcn3ateeg44.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fasumApp"
+              }
+            }
+          ]
         }
       }
     }

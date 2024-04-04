@@ -31,3 +31,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+Future<bool> signOutFromGoogle() async {
+  try {
+    await FirebaseAuth.instance.signOut();
+    return true;
+  } on Exception catch (_) {
+    return false;
+  }
+}
