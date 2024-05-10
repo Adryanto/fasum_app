@@ -1,6 +1,7 @@
-import 'package:fasum_app/screens/sign_in_screen.dart';
+import 'package:fasum_app/screens/post_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fasum_app/screens/sign_in_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,22 +27,33 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              bool result = await signOut(context);
-              if (result) SignInScreenState.userCredential.value = '';
-            },
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-      ),
-      body: const Center(
-        child: Text('You have logged In'),
-      ),
-    );
+        appBar: AppBar(
+          title: const Text('Home'),
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          actions: [
+            IconButton(
+              onPressed: () async {
+                bool result = await signOut(context);
+                if (result) signInScreenState.userCredential.value = '';
+              },
+              icon: const Icon(Icons.logout),
+            ),
+          ],
+        ),
+        body: const Center(
+          child: Text('You have logged In'),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Color.fromARGB(255, 129, 214, 248),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PostScreen()),
+            );
+          },
+          label: const Text('Add'),
+          icon: const Icon(Icons.add,
+              color: Color.fromARGB(255, 3, 3, 3), size: 25),
+        ));
   }
 }
