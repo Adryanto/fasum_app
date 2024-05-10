@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:fasum_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({Key? key});
@@ -9,61 +11,72 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  // Fungsi untuk membuka kamera saat tombol "upload" ditekan
-  Future<void> _openCamera() async {
-    // Tambahkan logika untuk membuka kamera dan mengambil foto di sini
-    print('Opening camera...');
-  }
+  final _postTextController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  XFile? _image;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Post Screen"),
+        title: const Text("Post Screen"),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Tombol "upload" untuk membuka kamera
-          GestureDetector(
-            onTap: _openCamera,
-            child: Container(
-              padding: EdgeInsets.all(16),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.upload, // Ganti dengan ikon upload Anda
-                size: 100,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: () async {
+                final pickedFile =
+                await _picker.pickImage(source: ImageSource.camera);
+                if (pickedFile != null) {
+                  setState(() {
+                    _image = pickedFile;
+                  });
+                }
+              },
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+
+                ),
+                child: _image != null
+                    ? Image.file(File(_image!.path))
+                    : Icon(Icons.camera_alt),
               ),
             ),
-          ),
-          // TextField untuk mengisi teks postingan
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: TextField(
+            SizedBox(height: 16),
+            TextField(
+              controller: _postTextController,
               decoration: InputDecoration(
-                hintText: 'Tulis postingan Anda...',
+                hintText: 'Masukkan Deskripsi',
                 border: OutlineInputBorder(),
               ),
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
             ),
-          ),
-          // Tombol "Post" untuk menyimpan postingan
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ElevatedButton(
+            SizedBox(height: 16),
+            ElevatedButton(
               onPressed: () {
-                // Tambahkan logika untuk menyimpan posting ke Firebase Cloud Firestore di sini
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                );
+
+                Navigator.pop(context);
               },
-              child: Text('Post'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 50),
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              ),
+              child: Text('Post', style: TextStyle(color: Colors.black),),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _postTextController.dispose();
+    super.dispose();
   }
 }
