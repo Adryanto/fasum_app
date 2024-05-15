@@ -1,13 +1,12 @@
 import 'dart:io';
-import 'package:fasum_app/screens/home_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostScreen extends StatefulWidget {
-  const PostScreen({Key? key});
-
   @override
-  State<PostScreen> createState() => _PostScreenState();
+  _PostScreenState createState() => _PostScreenState();
 }
 
 class _PostScreenState extends State<PostScreen> {
@@ -19,8 +18,8 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Post Screen"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text('Tambah Postingan'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,19 +27,13 @@ class _PostScreenState extends State<PostScreen> {
           children: [
             GestureDetector(
               onTap: () async {
-                final pickedFile =
-                await _picker.pickImage(source: ImageSource.camera);
-                if (pickedFile != null) {
-                  setState(() {
-                    _image = pickedFile;
-                  });
-                }
+                await _showImageSourceDialog();
               },
               child: Container(
-                width: 100,
-                height: 100,
+                width: 150,
+                height: 150,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[300],
 
                 ),
                 child: _image != null
@@ -57,16 +50,87 @@ class _PostScreenState extends State<PostScreen> {
               ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
 
-                Navigator.pop(context);
+            ElevatedButton(
+              onPressed: () async {
+                if (_image == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please select an image')),
+                  );
+                  return;
+                }
+
+                Reference referenceRoot = FirebaseStorage.instance.ref();
+                Reference referenceDirImages = referenceRoot.child("images");
+                Reference referenceImagesToUpload =
+                referenceDirImages.child(_image!.path.split("/").last);
+
+                try {
+                  final uploadTask =
+                  await referenceImagesToUpload.putFile(File(_image!.path));
+                  final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+                  // Add Firebase Cloud Firestore functionality here
+                  final CollectionReference posts =
+                  FirebaseFirestore.instance.collection('posts');
+                  await posts.add({
+                    'text': _postTextController.text,
+                    'image_url': downloadUrl,
+                    'timestamp': Timestamp.now(),
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Image uploaded successfully')),
+                  );
+
+                  Navigator.pop(context);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error uploading image: $e')),
+                  );
+                }
               },
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 50),
-                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              ),
-              child: Text('Post', style: TextStyle(color: Colors.black),),
+              child: Text('Post'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showImageSourceDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Choose Image Source'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text('Take a new photo'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final pickedFile =
+                await _picker.pickImage(source: ImageSource.camera);
+                if (pickedFile != null) {
+                  setState(() {
+                    _image = pickedFile;
+                  });
+                }
+              },
+            ),
+            ListTile(
+              title: Text('Choose from library'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                final pickedFile =
+                await _picker.pickImage(source: ImageSource.gallery);
+                if (pickedFile != null) {
+                  setState(() {
+                    _image = pickedFile;
+                  });
+                }
+              },
             ),
           ],
         ),

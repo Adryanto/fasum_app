@@ -41,6 +41,9 @@ dependencies:
   google_sign_in: ^6.2.1
   camera: ^0.10.6
   image_picker: ^1.1.1
+  firebase_storage: ^11.7.5
+  image_picker_plus: ^0.5.9
+  cloud_firestore: ^4.17.3
 
 dev_dependencies:
   flutter_test:
