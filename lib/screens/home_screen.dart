@@ -1,3 +1,4 @@
+import 'package:fasum_app/screens/detail_screen.dart';
 import 'package:fasum_app/screens/post_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,35 +65,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 final formattedDate = DateFormat.yMMMd().format(date); // format the date
                 final formattedTime = DateFormat.jm().format(date); // format the time
 
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(18.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(post['text']),
-                                Text('Tanggal = $formattedDate'),  // display the formatted date
-                                Text('Jam = $formattedTime'),  // display the formatted time
-                                Text('Email = $email'),
-                              ],
+                return GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(postId: '',)));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(post['text']),
+                                  Text('Tanggal = $formattedDate'),  // display the formatted date
+                                  Text('Jam = $formattedTime'),  // display the formatted time
+                                  Text('Email = $email'),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.network(post['image_url']),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.network(post['image_url']),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
